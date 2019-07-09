@@ -8,7 +8,7 @@ servers = database["servers"]
 def get_prefix(bot, message):
 	query = servers.find({"id": message.guild.id}, {"_id": 0}).limit(1)
 	if not message.guild or query.count() == 0:
-		return '$>.'
+		return '>.'
 	prefix = ""
 	for server in query:
 		prefix = server["prefix"]
