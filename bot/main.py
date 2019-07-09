@@ -24,13 +24,8 @@ for cog in cogs:
 
 @bot.listen()
 async def on_ready():
-	await bot.change_presence(activity=discord.Game("Kanelbulle v1.1.1"))
 	print("Bot is READY.")
 
-@bot.listen()
-async def on_guild_join(guild):
-	#catblonch
-    pass
 
 try:
 	bot.run(config.token)
