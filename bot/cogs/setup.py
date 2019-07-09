@@ -1,11 +1,5 @@
 from discord.ext import commands
-from discord.utils import escape_mentions
-from discord.utils import escape_markdown
 import pymongo, discord, asyncio, re
-
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
-servers = database["servers"]
 
 class Setup(commands.Cog):
     def __init__(self, bot):
@@ -13,6 +7,8 @@ class Setup(commands.Cog):
 
     @commands.command()
     async def settings(self, ctx):
+        database = self.bot.client["kanelbulle"]
+        servers = database["servers"]
         query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
         #will only run once anyway
         for server in query:
@@ -33,12 +29,9 @@ class Setup(commands.Cog):
         await ctx.send("Oh no! This server has not been set up yet, but don't fret, run `<.setup` and we'll get this server all ready in no time!")
 
     @commands.command()
-    async def prefix(self, ctx, prefix: str):
-        servers.update_one({"id": ctx.guild.id}, {"$set": {"prefix": prefix}})
-        await ctx.send(f"Prefix set to {escape_markdown(escape_mentions(prefix))}.")
-
-    @commands.command()
     async def setup(self, ctx):
+        database = self.bot.client["kanelbulle"]
+        servers = database["servers"]
         query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
         def reaction_check(reaction, user):
             return user.id == ctx.author.id and (str(reaction.emoji) == "❌" or str(reaction.emoji) == "✅")
@@ -72,7 +65,7 @@ class Setup(commands.Cog):
         elif str(reaction.emoji) == "✅":
             await m.delete()
         m1 = await ctx.send(
-            "Glad to hear! :) " 
+            "Glad to hear! :) "
             +"Now let's get started, shall we? Should you accidentally click the wrong reaction, or answer wrongly, no need to start over you can all change this later on."
             +"\nWould you like to enable the moderation part of the bot for your server?"
         )
@@ -154,7 +147,7 @@ class Setup(commands.Cog):
             }
         )
         await ctx.send("And that's it! You're good to go! :)")
-        
+
 
 def setup(bot):
     bot.add_cog(Setup(bot))
