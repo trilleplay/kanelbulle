@@ -1,20 +1,9 @@
 from discord.ext import commands
 import pymongo, config, discord
-
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
-servers = database["servers"]
-
-def get_prefix(bot, message):
-	query = servers.find({"id": message.guild.id}, {"_id": 0}).limit(1)
-	if not message.guild or query.count() == 0:
-		return '>.'
-	prefix = ""
-	for server in query:
-		prefix = server["prefix"]
-	return commands.when_mentioned_or(prefix)(bot, message)
+from utils.get_prefix import get_prefix
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
+bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
 
 cogs = ["basic", "setup", "moderation"]
 
