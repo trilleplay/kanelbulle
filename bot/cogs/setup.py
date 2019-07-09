@@ -1,4 +1,6 @@
 from discord.ext import commands
+from discord.utils import escape_mentions
+from discord.utils import escape_markdown
 import pymongo, discord, asyncio, re
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -29,6 +31,11 @@ class Setup(commands.Cog):
             await ctx.send(embed=embed)
             return
         await ctx.send("Oh no! This server has not been set up yet, but don't fret, run `<.setup` and we'll get this server all ready in no time!")
+
+    @commands.command()
+    async def prefix(self, ctx, prefix: str):
+        servers.update_one({"id": ctx.guild.id}, {"$set": {"prefix": prefix}})
+        await ctx.send(f"Prefix set to {escape_markdown(escape_mentions(prefix))}.")
 
     @commands.command()
     async def setup(self, ctx):

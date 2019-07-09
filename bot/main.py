@@ -8,7 +8,7 @@ servers = database["servers"]
 def get_prefix(bot, message):
 	query = servers.find({"id": message.guild.id}, {"_id": 0}).limit(1)
 	if not message.guild or query.count() == 0:
-		return '>.'
+		return '$>.'
 	prefix = ""
 	for server in query:
 		prefix = server["prefix"]
@@ -16,7 +16,7 @@ def get_prefix(bot, message):
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 
-cogs = ["basic", "setup", "moderation"]
+cogs = ["basic", "setup", "moderation", "message_logs"]
 
 for cog in cogs:
 	bot.load_extension(f"cogs.{cog}")
