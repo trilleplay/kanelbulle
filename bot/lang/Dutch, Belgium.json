@@ -13,8 +13,8 @@
   "setup_finished": "En dat is het! We zijn klaar! :)",
   "settings_channels_title": "Log Kanalen",
   "settings_channels": "**Moderator acties:** <#{moderator_actions_channel}>\n**Berichten:** <#{messages_channel}>",
-  "leveling_rank_cmd": "You have {xp} xp in {guild_name}",
-  "invalid_sub_command": "Hmmm. I don't know that command, are you sure you typed it out right?",
+  "leveling_rank_cmd": "Je hebt {xp} xp in {guild_name}",
+  "invalid_sub_command": "Hmmm. Ik ken dat commando niet, weet u zeker dat u het juist hebt ingevoerd?",
   "leveling_role_already_assigned": "That role already appears to be assigned to an xp level.",
-  "leveling_role_assign_success": "Okay! Role **{role}** will unlock when you reach {xp} xp. :)"
+  "leveling_role_assign_success": "Oké! Rol **{role}** zal ontgrendelen wanneer je {xp} xp bereikt. :)"
 }
