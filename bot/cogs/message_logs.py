@@ -9,6 +9,11 @@ class MessageLogs(commands.Cog):
 	async def on_message(self, message):
 		database = self.bot.client["kanelbulle"]
 		messages = database["messages"]
+		servers = database["servers"]
+		# Only store messages if logging is enabled.
+		for server in servers.find({"id": message.guild.id}, {"_id": 0}).limit(1):
+			if server["log_channels"]["messages"] is None:
+				return
 		messages.insert_one(
             {
                 "guild_id": message.guild.id,
