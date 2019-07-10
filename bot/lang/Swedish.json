@@ -9,6 +9,8 @@
   "setup_enable_message_logs": "Would you like me to log deleted & edited messages to a channel?",
   "setup_message_log_channel_success": "Okay! I will log deleted messages to <#{channel_id}>.",
   "setup_custom_prefix": "Would you like to have a custom prefix?",
-  "setup_custom_prefix_yes": "Okay. Which one would you like?",
-  "setup_finished": "And that's it! You're good to go! :)"
+  "setup_custom_prefix_yes": "Okej. Vad skulle du vilja ha?",
+  "setup_finished": "And that's it! You're good to go! :)",
+  "settings_channels_title": "Log Channels",
+  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>"
 }
