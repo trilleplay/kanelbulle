@@ -4,10 +4,23 @@ import discord, pymongo
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 database = client["kanelbulle"]
 servers = database["servers"]
+messages = database["messages"]
 
 class MessageLogs(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+
+	@commands.Cog.listener()
+	async def on_message(self, message):
+		messages.insert_one(
+            {
+                "guild_id": message.guild.id,
+				"channel_id": message.channel.id,
+                "message_id": message.id,
+				"content": message.content,
+				"author": message.author.id
+            }
+        )
 
 	@commands.Cog.listener()
 	async def on_message_delete(self, message):

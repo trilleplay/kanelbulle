@@ -1,11 +1,12 @@
 from discord.ext import commands
-import pymongo, config, discord
+import pymongo, discord
+from config import token
 from utils.get_prefix import get_prefix
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
 
-cogs = ["basic", "setup", "moderation", "message_logs"]
+cogs = ["basic", "setup", "moderation", "message_logs", "gamestats"]
 
 for cog in cogs:
 	bot.load_extension(f"cogs.{cog}")
@@ -17,6 +18,6 @@ async def on_ready():
 
 
 try:
-	bot.run(config.token)
+	bot.run(token)
 except KeyboardInterrupt:
 	print("Shutting down..")
