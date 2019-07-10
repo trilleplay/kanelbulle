@@ -11,3 +11,15 @@ class ApexPlatformConverter(commands.Converter):
             return(ValidPlatforms[f"{argument.upper()}"])
         except KeyError:
             return("invalid")
+
+class FortnitePlatformConverter(commands.Converter):
+    async def convert(self, ctx, argument):
+        if argument.lower() == "pc":
+            request_platform = "pc"
+        elif argument.lower() == "ps4":
+            request_platform = "psn"
+        elif argument.lower() == "xbox":
+            request_platform = "xbl"
+        else:
+            request_platform = "invalid"
+        return(request_platform)
