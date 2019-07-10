@@ -19,8 +19,16 @@ class Setup(commands.Cog):
                     "color": 15575881,
                     "fields": [
                         {
-                            "name": "Log Channels",
-                            "value": f"**Moderator actions:** <#{server['log_channels']['moderator_actions']}>\n**Messages:** <#{server['log_channels']['messages']}>"
+                            "name":  text_handler.translate(
+                                server["language"],
+                                "settings_channels_title"
+                            ),
+                            "value": text_handler.translate(
+                                server["language"],
+                                "settings_channels",
+                                moderator_actions_channel=server['log_channels']['moderator_actions'],
+                                messages_channel=server['log_channels']['messages']
+                            )
                         }
                     ]
                 }

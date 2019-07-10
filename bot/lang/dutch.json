@@ -10,5 +10,7 @@
   "setup_message_log_channel_success": "Oke! Ik zal verwijderde & bijwerkte berichten neerschrijven in <#{channel_id}>.",
   "setup_custom_prefix": "Zou je graag een eigen prefix hebben?",
   "setup_custom_prefix_yes": "Oke. Welke zou je graag hebben?",
-  "setup_finished": "Dat is het! We zijn klaar! :)"
+  "setup_finished": "Dat is het! We zijn klaar! :)",
+  "settings_channels_title": "Log Channels",
+  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>"
 }
