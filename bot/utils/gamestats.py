@@ -32,3 +32,37 @@ async def apex_fetch(client, platform: str, username: str):
             return await resp.json()
         else:
             raise Unknown()
+
+async def fortnite_fetch(client, platform: str, username: str):
+    if platform == "pc":
+        pass
+    elif platform == "psn":
+        pass
+    elif platform == "xbl":
+        pass
+    else:
+        raise InvalidPlatform("Platform is not: pc, psn or xbl.")
+    headers = {
+    'TRN-Api-Key': tracker_network_api_key,
+    'cache-control': "no-cache"
+    }
+    async with client.get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{urllib.parse.quote(username)}", headers=headers) as resp:
+        if resp.status == 401:
+            raise Forbidden("Invalid Authorization.")
+        if resp.status == 500:
+            raise Unknown()
+        if resp.status == 503:
+            raise Unavailable()
+        if resp.status == 429:
+            raise RateLimit()
+        # Why can't you just return 404 here API and make my life easier.
+        json = await resp.json()
+        try:
+            if json["error"] == "Player Not Found":
+                raise NotFound()
+        except KeyError:
+            pass
+        if resp.status == 200:
+            return await resp.json()
+        else:
+            raise Unknown()
