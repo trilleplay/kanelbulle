@@ -26,7 +26,7 @@ class MessageLogs(commands.Cog):
 	async def on_message_delete(self, message):
 		for server in servers.find({"id": message.guild.id}, {"_id": 0}).limit(1):
 			log_channel = message.guild.get_channel(server["log_channels"]["messages"])
-			if log_channel is not None:
+			if log_channel is not None and not message.author.bot and message.channel.id != log_channel.id:
 				await log_channel.send(
 					content=f":x: **{message.author.name}**#{message.author.discriminator} ({message.author.id})'s message has been deleted in <#{message.id}>",
 					embed=discord.Embed().from_dict(

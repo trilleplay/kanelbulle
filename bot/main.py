@@ -16,7 +16,6 @@ for cog in cogs:
 async def on_ready():
 	print("Bot is READY.")
 
-
 try:
 	bot.run(token)
 except KeyboardInterrupt:

@@ -81,6 +81,7 @@ class Setup(commands.Cog):
             res = await ctx.send("Okay, I will **not** enable the moderation part.")
             await m1.delete()
         moderation_channel = None
+        finished_msg = None
         if moderation_enabled:
             m2 = await ctx.send("Would you like me to log moderator actions to a channel?")
             await m2.add_reaction("✅")
@@ -88,9 +89,9 @@ class Setup(commands.Cog):
             reaction2, user = await self.bot.wait_for("reaction_add", check=reaction_check)
             await res.delete()
             if str(reaction2.emoji) == "✅":
-                await m2.delete()
                 _m = await ctx.send("Okay. Where would you like me to log it to?")
                 m3 = await self.bot.wait_for("message", check=message_check)
+                await m2.delete()
                 mod_actions_log_input = None
                 try:
                     mod_actions_log_input = ctx.guild.get_channel(int(m3.content))
@@ -108,22 +109,26 @@ class Setup(commands.Cog):
                     await ctx.send("Hmmm. I can't seem to find that channel.. Are you sure I have access to it?")
                     return
                 moderation_channel = mod_actions_log_input.id
-                await ctx.send(f"Okay! I will log moderator actions to <#{mod_actions_log_input.id}>.")
+                finished_msg = await ctx.send(f"Okay! I will log moderator actions to <#{mod_actions_log_input.id}>.")
         messages_channel = None
         m2 = await ctx.send("Would you like me to log deleted messages to a channel?")
         await m2.add_reaction("✅")
         await m2.add_reaction("❌")
         reaction2, user = await self.bot.wait_for("reaction_add", check=reaction_check)
+        if finished_msg is not None:
+            await finished_msg.delete()
+            finished_msg = None
         if not moderation_enabled:
             await res.delete()
         if str(reaction2.emoji) == "✅":
-            await m2.delete()
             _m = await ctx.send("Okay. Where would you like me to log it to?")
             m3 = await self.bot.wait_for("message", check=message_check)
+            await m2.delete()
             messages_log_input = None
             try:
                 messages_log_input = ctx.guild.get_channel(int(m3.content))
                 await _m.delete()
+                await m3.delete()
             except ValueError:
                 try:
                     messages_log_input = ctx.guild.get_channel(int(m3.content.split("<#")[1].split(">")[0]))
@@ -138,17 +143,23 @@ class Setup(commands.Cog):
                 await _m.delete()
                 return
             messages_channel = messages_log_input.id
-            await ctx.send(f"Okay! I will log deleted messages to <#{messages_log_input.id}>.")
+            finished_msg = await ctx.send(f"Okay! I will log deleted messages to <#{messages_log_input.id}>.")
+        else:
+            await m2.delete()
         m3 = await ctx.send("Would you like to have a custom prefix?")
         await m3.add_reaction("✅")
         await m3.add_reaction("❌")
         reaction3, user = await self.bot.wait_for("reaction_add", check=reaction_check)
+        if finished_msg is not None:
+            await finished_msg.delete()
         prefix = ">."
         await m3.delete()
         if str(reaction3.emoji) == "✅":
-            await ctx.send("Okay. Which one would you like?")
+            _m = await ctx.send("Okay. Which one would you like?")
             m4 = await self.bot.wait_for("message", check=message_check)
             prefix = m4.content
+            await m4.delete()
+            await _m.delete()
         servers.insert_one(
             {
                 "id": ctx.guild.id,
