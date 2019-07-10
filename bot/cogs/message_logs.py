@@ -1,17 +1,14 @@
 from discord.ext import commands
 import discord, pymongo
 
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
-servers = database["servers"]
-messages = database["messages"]
-
 class MessageLogs(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
+		database = self.bot.client["kanelbulle"]
+		messages = database["messages"]
 		messages.insert_one(
             {
                 "guild_id": message.guild.id,
@@ -23,19 +20,25 @@ class MessageLogs(commands.Cog):
         )
 
 	@commands.Cog.listener()
-	async def on_message_delete(self, message):
-		for server in servers.find({"id": message.guild.id}, {"_id": 0}).limit(1):
-			log_channel = message.guild.get_channel(server["log_channels"]["messages"])
+	async def on_raw_message_delete(self, payload):
+		database = self.bot.client["kanelbulle"]
+		servers = database["servers"]
+		messages = database["messages"]
+		for server in servers.find({"id": payload.guild_id}, {"_id": 0}).limit(1):
+			guild = self.bot.get_guild(payload.guild_id)
+			log_channel = guild.get_channel(server["log_channels"]["messages"])
 			if log_channel is not None:
-				await log_channel.send(
-					content=f":x: **{message.author.name}**#{message.author.discriminator} ({message.author.id})'s message has been deleted in <#{message.id}>",
-					embed=discord.Embed().from_dict(
-						{
-							"description": message.content,
-							"color": 16745090
-						}
+				for message in messages.find({"message_id": payload.message_id}, {"_id": 0}).limit(1):
+					author = self.bot.get_user(message["author"])
+					await log_channel.send(
+						content=f":x: **{author.name}**#{author.discriminator} ({message['author']})'s message has been deleted in <#{payload.channel_id}>",
+						embed=discord.Embed().from_dict(
+							{
+								"description": message["content"],
+								"color": 16745090
+							}
+						)
 					)
-				)
 
 
 def setup(bot):
