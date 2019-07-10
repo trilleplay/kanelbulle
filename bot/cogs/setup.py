@@ -1,5 +1,6 @@
 from discord.ext import commands
-import pymongo, discord, asyncio, re
+import pymongo, discord, asyncio, re, config
+from utils import text_handler
 
 class Setup(commands.Cog):
     def __init__(self, bot):
@@ -26,7 +27,7 @@ class Setup(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        await ctx.send("Oh no! This server has not been set up yet, but don't fret, run `<.setup` and we'll get this server all ready in no time!")
+        await ctx.send()
 
     @commands.command()
     async def setup(self, ctx):
@@ -64,32 +65,42 @@ class Setup(commands.Cog):
             return
         elif str(reaction.emoji) == "✅":
             await m.delete()
-        m1 = await ctx.send(
+        language_question = await ctx.send(
             "Glad to hear! :) "
             +"Now let's get started, shall we? Should you accidentally click the wrong reaction, or answer wrongly, no need to start over you can all change this later on."
-            +"\nWould you like to enable the moderation part of the bot for your server?"
+            +f"\nWhat language do you prefer? You can choose from this list:\n{config.supported_languages}"
         )
+        language = await self.bot.wait_for("message", check=message_check)
+        if not language.content.lower() in config.supported_languages:
+            await ctx.send("Heck. It appears that we do not support that language yet, or maybe you made a typo in your message?")
+            return
+        else:
+            msg = language
+            await language.delete()
+            await language_question.delete()
+            language = msg
+        m1 = await text_handler.send_lang(ctx, "setup_enable_moderation", language.content)
         await m1.add_reaction("✅")
         await m1.add_reaction("❌")
         reaction1, user = await self.bot.wait_for("reaction_add", check=reaction_check)
         res = None
         moderation_enabled = str(reaction1.emoji) == "✅"
         if moderation_enabled:
-            res = await ctx.send("I will enable that for you.")
+            res = await text_handler.send_lang(ctx, "setup_enable", language.content)
             await m1.delete()
         else:
-            res = await ctx.send("Okay, I will **not** enable the moderation part.")
+            res = await text_handler.send_lang(ctx, "setup_not_enable", language.content)
             await m1.delete()
         moderation_channel = None
         finished_msg = None
         if moderation_enabled:
-            m2 = await ctx.send("Would you like me to log moderator actions to a channel?")
+            m2 = await text_handler.send_lang(ctx, "setup_mod_log_question", language.content)
             await m2.add_reaction("✅")
             await m2.add_reaction("❌")
             reaction2, user = await self.bot.wait_for("reaction_add", check=reaction_check)
             await res.delete()
             if str(reaction2.emoji) == "✅":
-                _m = await ctx.send("Okay. Where would you like me to log it to?")
+                _m = await text_handler.send_lang(ctx, "setup_where_to_log", language.content)
                 m3 = await self.bot.wait_for("message", check=message_check)
                 await m2.delete()
                 mod_actions_log_input = None
@@ -106,12 +117,12 @@ class Setup(commands.Cog):
                         await ctx.send("Oh no! That doesn't seem like a valid channel..")
                         return
                 if mod_actions_log_input is None:
-                    await ctx.send("Hmmm. I can't seem to find that channel.. Are you sure I have access to it?")
+                    await text_handler.send_lang(ctx, "setup_channel_not_found", language.content)
                     return
                 moderation_channel = mod_actions_log_input.id
-                finished_msg = await ctx.send(f"Okay! I will log moderator actions to <#{mod_actions_log_input.id}>.")
+                finished_msg = await text_handler.send_lang(ctx, "setup_mod_log_channel_success", language.content, channel_id=mod_actions_log_input.id)
         messages_channel = None
-        m2 = await ctx.send("Would you like me to log deleted messages to a channel?")
+        m2 = await text_handler.send_lang(ctx, "setup_enable_message_logs", language.content)
         await m2.add_reaction("✅")
         await m2.add_reaction("❌")
         reaction2, user = await self.bot.wait_for("reaction_add", check=reaction_check)
@@ -121,7 +132,7 @@ class Setup(commands.Cog):
         if not moderation_enabled:
             await res.delete()
         if str(reaction2.emoji) == "✅":
-            _m = await ctx.send("Okay. Where would you like me to log it to?")
+            _m = await text_handler.send_lang(ctx, "setup_where_to_log", language.content)
             m3 = await self.bot.wait_for("message", check=message_check)
             await m2.delete()
             messages_log_input = None
@@ -135,18 +146,19 @@ class Setup(commands.Cog):
                     await _m.delete()
                     await m3.delete()
                 except ValueError:
+                    # not translated yet bc borks
                     await ctx.send("Oh no! That doesn't seem like a valid channel..")
                     await _m.delete()
                     return
             if messages_log_input is None:
-                await ctx.send("Hmmm. I can't seem to find that channel.. Are you sure I have access to it?")
+                await text_handler.send_lang(ctx, "setup_channel_not_found", language.content)
                 await _m.delete()
                 return
             messages_channel = messages_log_input.id
-            finished_msg = await ctx.send(f"Okay! I will log deleted messages to <#{messages_log_input.id}>.")
+            finished_msg = await text_handler.send_lang(ctx, "setup_message_log_channel_success", language.content, channel_id=messages_channel)
         else:
             await m2.delete()
-        m3 = await ctx.send("Would you like to have a custom prefix?")
+        m3 = await text_handler.send_lang(ctx, "setup_custom_prefix", language.content)
         await m3.add_reaction("✅")
         await m3.add_reaction("❌")
         reaction3, user = await self.bot.wait_for("reaction_add", check=reaction_check)
@@ -155,7 +167,7 @@ class Setup(commands.Cog):
         prefix = ">."
         await m3.delete()
         if str(reaction3.emoji) == "✅":
-            _m = await ctx.send("Okay. Which one would you like?")
+            _m = await text_handler.send_lang(ctx, "setup_custom_prefix_yes", language.content)
             m4 = await self.bot.wait_for("message", check=message_check)
             prefix = m4.content
             await m4.delete()
@@ -164,13 +176,14 @@ class Setup(commands.Cog):
             {
                 "id": ctx.guild.id,
                 "prefix": prefix,
+                "language": language.content,
                 "log_channels": {
                     "moderator_actions": moderation_channel,
                     "messages": messages_channel
                 }
             }
         )
-        await ctx.send("And that's it! You're good to go! :)")
+        await text_handler.send_lang(ctx, "setup_finished", language.content)
 
 
 def setup(bot):
