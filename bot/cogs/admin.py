@@ -1,8 +1,6 @@
 from discord.ext import commands
-import textwrap
-import traceback
-import contextlib
-import io
+import textwrap, traceback, contextlib, io
+from utils import experiments, current_experiments, decorators
 
 class AdminCog(commands.Cog):
 
@@ -15,6 +13,21 @@ class AdminCog(commands.Cog):
         leaveguild = self.bot.get_guild(guild)
         await leaveguild.leave()
         await ctx.send("Kanelbulle has now left that server.")
+
+    @commands.group(name="experiments")
+    @decorators.is_admin()
+    async def experiments_cmd(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("Invalid sub command passed.")
+    
+    @experiments_cmd.command()
+    async def has(self, ctx, experiment_id: int):
+        await ctx.send(f"Experiment on: {experiments.has(ctx.guild.id, 1 << experiment_id)}")
+
+    @experiments_cmd.command(name="set")
+    async def _set(self, ctx, experiment_id: int, on: bool):
+        experiments.set_experiment(ctx.guild.id, 1 << experiment_id, on)
+        await ctx.send(f"Experiment on: {experiments.has(ctx.guild.id, 1 << experiment_id)}")
 
     # Eval Command - https://github.com/Rapptz/RoboDanny by Rapptz see credit.md for License
     @commands.command(hidden=True, name='eval')

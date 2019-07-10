@@ -2,12 +2,14 @@ from discord.ext import commands
 import discord, config
 from utils import snowflake
 from utils import clean
+from utils import experiments, current_experiments
 
 class Basic(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
 	@commands.command(aliases=["check"])
+	@experiments.has_experiment(current_experiments.MODERATION)
 	async def infractions(self, ctx, user: discord.Member):
 		database = self.bot.client["kanelbulle"]
 		infractions = database["infractions"]
@@ -52,6 +54,7 @@ class Basic(commands.Cog):
 		await ctx.send(f"```{header}{header_2}{infractions_str}```")
 
 	@commands.command(aliases=["strike"])
+	@experiments.has_experiment(current_experiments.MODERATION)
 	async def warn(self, ctx, user: discord.Member, *, reason: str = "No reason specified."):
 		database = self.bot.client["kanelbulle"]
 		infractions = database["infractions"]

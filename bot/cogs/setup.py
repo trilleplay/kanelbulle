@@ -76,7 +76,7 @@ class Setup(commands.Cog):
         language_question = await ctx.send(
             "Glad to hear! :) "
             +"Now let's get started, shall we? Should you accidentally click the wrong reaction, or answer wrongly, no need to start over you can all change this later on."
-            +f"\nWhat language do you prefer? You can choose from this list:\n{config.supported_languages}"
+            +f"\nWhat language do you prefer? You can choose from this list:\n{config.supported_languages_str}"
         )
         language = await self.bot.wait_for("message", check=message_check)
         if not language.content.lower() in config.supported_languages:
@@ -185,6 +185,7 @@ class Setup(commands.Cog):
                 "id": ctx.guild.id,
                 "prefix": prefix,
                 "language": language.content,
+                "experiments": 0,
                 "log_channels": {
                     "moderator_actions": moderation_channel,
                     "messages": messages_channel

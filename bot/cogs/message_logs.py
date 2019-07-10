@@ -7,6 +7,8 @@ class MessageLogs(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
+		if message.guild is None:
+			return
 		database = self.bot.client["kanelbulle"]
 		messages = database["messages"]
 		servers = database["servers"]

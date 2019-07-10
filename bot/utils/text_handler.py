@@ -1,4 +1,4 @@
-import discord, config, pymongo, json
+import discord, config, pymongo, json, os
 from cachetools import cached, TTLCache
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -9,9 +9,11 @@ string_cache = TTLCache(maxsize=100, ttl=300)
 
 @cached(string_cache)
 def translate(lang: str, string: str, **kwargs):
-    with open(f"lang/{lang}.json") as dataf:
-        returntranslatedstring = json.load(dataf)
-    return returntranslatedstring[string].format(**kwargs)
+    for filename in os.listdir("lang"):
+        if lang.lower() == filename.split(".json")[0].lower():
+            with open(f"lang/{filename}") as dataf:
+                returntranslatedstring = json.load(dataf)
+            return returntranslatedstring[string].format(**kwargs)
 
 async def send_lang(ctx, string: str, language: str, **kwargs):
     msg = await ctx.send(translate(language, string, **kwargs))
