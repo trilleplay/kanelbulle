@@ -12,5 +12,9 @@
   "setup_custom_prefix_yes": "Okej. Vad skulle du vilja ha?",
   "setup_finished": "And that's it! You're good to go! :)",
   "settings_channels_title": "Log Channels",
-  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>"
+  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>",
+  "leveling_rank_cmd": "You have {xp} xp in {guild_name}",
+  "invalid_sub_command": "Hmmm. I don't know that command, are you sure you typed it out right?",
+  "leveling_role_already_assigned": "That role already appears to be assigned to an xp level.",
+  "leveling_role_assign_success": "Okay! Role **{role}** will unlock when you reach {xp} xp. :)"
 }
