@@ -1,0 +1,16 @@
+{
+  "setup_enable_moderation": "Would you like to enable the moderation part of the bot for your server?",
+  "setup_enable": "I will enable that for you.",
+  "setup_not_enable": "Okay, I will **not** enable the moderation part.",
+  "setup_mod_log_question": "Would you like me to log moderator actions to a channel?",
+  "setup_where_to_log": "Okay. Where would you like me to log it to?",
+  "setup_channel_not_found": "Hmmm. I can't seem to find that channel.. Are you sure I have access to it?",
+  "setup_mod_log_channel_success": "Okay! I will log moderator actions to <#{channel_id}>.",
+  "setup_enable_message_logs": "Would you like me to log deleted & edited messages to a channel?",
+  "setup_message_log_channel_success": "Okay! I will log deleted messages to <#{channel_id}>.",
+  "setup_custom_prefix": "Would you like to have a custom prefix?",
+  "setup_custom_prefix_yes": "Okej. Vad skulle du vilja ha?",
+  "setup_finished": "And that's it! You're good to go! :)",
+  "settings_channels_title": "Log Channels",
+  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>"
+}
