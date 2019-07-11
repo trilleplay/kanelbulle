@@ -12,8 +12,8 @@ for cog in cogs:
 	bot.load_extension(f"cogs.{cog}")
 	print(f"Loaded cog {cog}.")
 
-bot.load_extension("jishaku")
-print("Loaded cog jishaku")
+# bot.load_extension("jishaku")
+# print("Loaded cog jishaku")
 
 @bot.listen()
 async def on_ready():
