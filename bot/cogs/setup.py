@@ -9,7 +9,7 @@ class Setup(commands.Cog):
 	@commands.command()
 	@permissions.has_permission(permissions.ADMIN)
 	async def settings(self, ctx):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		#will only run once anyway
@@ -48,7 +48,7 @@ class Setup(commands.Cog):
 	@commands.group(name="permissions")
 	@permissions.has_permission(permissions.ADMIN)
 	async def _permissions(self, ctx):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		server_query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		if server_query.count() == 0:
@@ -59,7 +59,7 @@ class Setup(commands.Cog):
 	
 	@_permissions.command()
 	async def add(self, ctx, role: discord.Role, permission: str):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		server_query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		perm = permissions.get_permission(permission)
@@ -73,7 +73,7 @@ class Setup(commands.Cog):
 
 	@_permissions.command()
 	async def remove(self, ctx, role: discord.Role, permission: str):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		server_query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		perm = permissions.get_permission(permission)
@@ -87,7 +87,7 @@ class Setup(commands.Cog):
 	@commands.command()
 	@permissions.has_permission(permissions.ADMIN)
 	async def setup(self, ctx):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		def reaction_check(reaction, user):

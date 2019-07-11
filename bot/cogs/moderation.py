@@ -11,7 +11,7 @@ class Basic(commands.Cog):
 	@commands.command(aliases=["check"])
 	@experiments.has_experiment(current_experiments.MODERATION)
 	async def infractions(self, ctx, user: discord.Member):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		infractions = database["infractions"]
 		servers = database["servers"]
 		server_query = servers.find(
@@ -56,7 +56,7 @@ class Basic(commands.Cog):
 	@commands.command(aliases=["strike"])
 	@experiments.has_experiment(current_experiments.MODERATION)
 	async def warn(self, ctx, user: discord.Member, *, reason: str = "No reason specified."):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		infractions = database["infractions"]
 		servers = database["servers"]
 		query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)

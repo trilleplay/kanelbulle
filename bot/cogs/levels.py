@@ -7,7 +7,7 @@ class Levels(commands.Cog):
 		self.bot = bot
 	
 	def set_unlockable_role_at(self, guild: int, xp: int, role: discord.Role):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		doc = servers.find({"id": guild}).limit(1)
 		if doc is not None:
@@ -29,7 +29,7 @@ class Levels(commands.Cog):
 			servers.update_one({"id": guild}, {"$set": {"xp_unlockable_roles": unlockable_roles}})
 
 	def get_unlockable_roles(self, guild: int):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		doc = servers.find({"id": guild}, {"_id": 0})
 		if doc is not None:
@@ -46,7 +46,7 @@ class Levels(commands.Cog):
 	@commands.command()
 	@decorators.is_admin()
 	async def guild(self, ctx):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		for server in servers.find({"id": ctx.guild.id}, {"_id": 0}):
 			await ctx.send(server)
@@ -61,7 +61,7 @@ class Levels(commands.Cog):
 	
 	@levels.command()
 	async def dm(self, ctx, on: str):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		server_query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
 		if server_query.count() == 0:
@@ -88,7 +88,7 @@ class Levels(commands.Cog):
 	@commands.guild_only()
 	@experiments.has_experiment(current_experiments.LEVELS)
 	async def rank(self, ctx):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		levels = database["levels"]
 		servers = database["servers"]
 		level_query = levels.find(
@@ -110,6 +110,7 @@ class Levels(commands.Cog):
 			try:
 				if server["leveling_send_dm"] == True:
 					for level_doc in level_query:
+						await ctx.message.delete()
 						await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=level_doc["level"], guild_name=guild_name))
 						return
 				else:
@@ -118,8 +119,10 @@ class Levels(commands.Cog):
 						return
 			except:
 				for level_doc in level_query:
+					await ctx.message.delete()
 					await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=level_doc["level"], guild_name=guild_name))
 					return
+			await ctx.message.delete()
 			await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=0, guild_name=guild_name))
 	
 	@commands.group()
@@ -146,7 +149,7 @@ class Levels(commands.Cog):
 		if message.guild is None or message.author.bot:
 			return
 		if experiments.has(message.guild.id, current_experiments.LEVELS):
-			database = self.bot.client["kanelbulle"]
+			database = self.bot.client[config.database_name]
 			levels = database["levels"]
 			level_query = levels.find(
 				{

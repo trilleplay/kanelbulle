@@ -2,7 +2,7 @@ import pymongo, discord, config
 from discord.ext import commands
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
+database = client[config.database_name]
 servers = database["servers"]
 
 ADMIN = 1 << 0

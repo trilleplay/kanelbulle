@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, pymongo
+import discord, pymongo, config
 
 class MessageLogs(commands.Cog):
 	def __init__(self, bot):
@@ -9,7 +9,7 @@ class MessageLogs(commands.Cog):
 	async def on_message(self, message):
 		if message.guild is None:
 			return
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		messages = database["messages"]
 		servers = database["servers"]
 		# Only store messages if logging is enabled.
@@ -28,7 +28,7 @@ class MessageLogs(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_raw_message_delete(self, payload):
-		database = self.bot.client["kanelbulle"]
+		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		messages = database["messages"]
 		for server in servers.find({"id": payload.guild_id}, {"_id": 0}).limit(1):

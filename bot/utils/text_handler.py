@@ -2,7 +2,7 @@ import discord, config, pymongo, json, os
 from cachetools import cached, TTLCache
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
+database = client[config.database_name]
 servers = database["servers"]
 
 string_cache = TTLCache(maxsize=100, ttl=300)
