@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord, pymongo, time, config
-from utils import experiments, current_experiments, text_handler, clean, decorators
+from utils import experiments, current_experiments, text_handler, clean, decorators, permissions
 
 class Levels(commands.Cog):
 	def __init__(self, bot):
@@ -51,6 +51,39 @@ class Levels(commands.Cog):
 		for server in servers.find({"id": ctx.guild.id}, {"_id": 0}):
 			await ctx.send(server)
 
+	@commands.group()
+	@commands.guild_only()
+	@experiments.has_experiment(current_experiments.LEVELS)
+	@permissions.has_permission(permissions.ADMIN)
+	async def levels(self, ctx):
+		if ctx.invoked_subcommand is None:
+			await text_handler.send(ctx, "invalid_sub_command")
+	
+	@levels.command()
+	async def dm(self, ctx, on: str):
+		database = self.bot.client["kanelbulle"]
+		servers = database["servers"]
+		server_query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)
+		if server_query.count() == 0:
+			await ctx.send("Oh no! This server has not been set up yet, but don't fret, run `<.setup` and we'll get this server all ready in no time!")
+			return
+		if on.lower() == "on":
+			is_on = True
+		elif on.lower() == "off":
+			is_on = False
+		servers.update_one(
+			{
+				"id": ctx.guild.id
+			},
+			{
+				"$set": {
+					"leveling_send_dm": is_on
+				}
+			}
+		)
+		for server in server_query:
+			await text_handler.send(ctx, "leveling_dm_on" if is_on else "leveling_dm_off", prefix=server["prefix"])
+
 	@commands.command()
 	@commands.guild_only()
 	@experiments.has_experiment(current_experiments.LEVELS)
@@ -71,11 +104,23 @@ class Levels(commands.Cog):
 		)
 		if server_query.count() == 0:
 			return
+		username = await clean.clean_escape(str(ctx.author))
+		guild_name = await clean.clean_escape(ctx.guild.name)
 		for server in server_query:
-			for level_doc in level_query:
-				await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", xp=level_doc["level"], guild_name=ctx.guild.name))
-				return
-		await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", xp=0, guild_name=ctx.guild.name))
+			try:
+				if server["leveling_send_dm"] == True:
+					for level_doc in level_query:
+						await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=level_doc["level"], guild_name=guild_name))
+						return
+				else:
+					for level_doc in level_query:
+						await ctx.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=level_doc["level"], guild_name=guild_name))
+						return
+			except:
+				for level_doc in level_query:
+					await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=level_doc["level"], guild_name=guild_name))
+					return
+			await ctx.author.send(text_handler.translate(server["language"], "leveling_rank_cmd", user_tag=username, xp=0, guild_name=guild_name))
 	
 	@commands.group()
 	@experiments.has_experiment(current_experiments.LEVELS)
