@@ -36,7 +36,7 @@ class Setup(commands.Cog):
 						},
 						{
 							"name": text_handler.translate(server["language"], "settings_bot_perms"),
-							"value": role_perms
+							"value": role_perms if role_perms != "" else "No permissions have been assigned."
 						}
 					]
 				}
@@ -220,7 +220,7 @@ class Setup(commands.Cog):
 		reaction3, user = await self.bot.wait_for("reaction_add", check=reaction_check)
 		if finished_msg is not None:
 			await finished_msg.delete()
-		prefix = ">."
+		prefix = "<."
 		await m3.delete()
 		if str(reaction3.emoji) == "✅":
 			_m = await text_handler.send_lang(ctx, "setup_custom_prefix_yes", language.content)
