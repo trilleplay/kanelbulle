@@ -1,8 +1,8 @@
-import pymongo
+import pymongo, config
 from discord.ext import commands
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-database = client["kanelbulle"]
+database = client[config.database_name]
 servers = database["servers"]
 
 def has(guild_id: int, experiment: int):

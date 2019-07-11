@@ -12,5 +12,15 @@
   "setup_custom_prefix_yes": "Okay. Which one would you like?",
   "setup_finished": "And that's it! You're good to go! :)",
   "settings_channels_title": "Log Channels",
-  "settings_channels": "**Moderator actions:** <#{moderator_actions_channel}>\n**Messages:** <#{messages_channel}>"
+  "settings_channels": "**Moderator actions:** {moderator_actions_channel}\n**Messages:** {messages_channel}",
+  "settings_bot_perms": "Bot Permissions",
+  "leveling_rank_cmd": "**{user_tag}**, you have **{xp}** xp in **{guild_name}**",
+  "invalid_sub_command": "Hmmm. I don't know that command, are you sure you typed it out right?",
+  "leveling_role_already_assigned": "That role already appears to be assigned to an xp level.",
+  "leveling_role_assign_success": "Okay! Role **{role}** will unlock when you reach {xp} xp. :)",
+  "leveling_dm_on": "Okay, the `{prefix}rank` command will now **DM** the user.",
+  "leveling_dm_off": "Okay, the `{prefix}rank` command will now **send the message in the server**.",
+  "permissions_role_unknown_permission": "Oh no! I don't think I know that permission. Do `{prefix}permissions list` for a list of all available permissions.",
+  "permissions_role_added": "Added role **{role_name}** to permission level **{perm_level}**.",
+  "permissions_role_removed": "Removed role **{role_name}** from permission level **{perm_level}**."
 }
