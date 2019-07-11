@@ -28,7 +28,7 @@ def has_permission_role(guild_id: int, role: int, permission: int):
     for server in servers.find({"id": guild_id}, {"role_permissions": 1}).limit(1):
         for role_permission in server["role_permissions"]:
             if role_permission["role_id"] == role:
-                return (role_permission["perms"] & permission) == permission
+                return (role_permission["perms"] & permission) == permission or (role_permission["perms"] & ADMIN) == ADMIN
     return None
 
 def has_permission_member(guild_id: int, member: discord.Member, permission: int):
@@ -36,7 +36,7 @@ def has_permission_member(guild_id: int, member: discord.Member, permission: int
         for role_permission in server["role_permissions"]:
             for role in member.roles:
                 if role_permission["role_id"] == role.id:
-                    return (role_permission["perms"] & permission) == permission
+                    return (role_permission["perms"] & permission) == permission or (role_permission["perms"] & ADMIN) == ADMIN
         return False
     return None
 
