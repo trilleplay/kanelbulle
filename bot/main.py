@@ -1,8 +1,11 @@
 from discord.ext import commands
 import pymongo, discord
 from config import token, admin_actions_log, emojis
+import logging
 from utils.get_prefix import get_prefix
 from utils.timestamp import timestamp
+
+logging.basicConfig(level=logging.INFO)
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
