@@ -7,7 +7,7 @@ from utils.timestamp import timestamp
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
 
-cogs = ["basic", "setup", "moderation", "message_logs", "gamestats", "levels", "admin", "errors"]
+cogs = ["basic", "setup", "moderation", "message_logs", "gamestats", "levels", "admin"]
 
 for cog in cogs:
 	bot.load_extension(f"cogs.{cog}")
