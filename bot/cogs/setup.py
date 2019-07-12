@@ -1,6 +1,7 @@
 from discord.ext import commands
 import pymongo, discord, asyncio, re, config
 from utils import text_handler, permissions, clean
+from config import admins
 
 class Setup(commands.Cog):
 	def __init__(self, bot):
@@ -56,7 +57,7 @@ class Setup(commands.Cog):
 			return
 		if ctx.invoked_subcommand is None:
 			await text_handler.send(ctx, "invalid_sub_command")
-	
+
 	@_permissions.command()
 	async def add(self, ctx, role: discord.Role, permission: str):
 		database = self.bot.client[config.database_name]
@@ -84,9 +85,14 @@ class Setup(commands.Cog):
 		permissions.set_permission(ctx.guild.id, role.id, permissions.get_permission(permission), False)
 		role_name = await clean.clean_escape(role.name)
 		await text_handler.send(ctx, "permissions_role_removed", role_name=role_name, perm_level = permission)
+
 	@commands.command()
-	@permissions.has_permission(permissions.ADMIN)
 	async def setup(self, ctx):
+		if ctx.author != ctx.guild.owner:
+			if ctx.author.id in admins:
+				pass
+			else:
+				return
 		database = self.bot.client[config.database_name]
 		servers = database["servers"]
 		query = servers.find({"id": ctx.guild.id}, {"_id": 0}).limit(1)

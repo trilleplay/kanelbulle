@@ -64,4 +64,4 @@ def createNodeId():
     nodeId = randint(100, 999) & maxNodeId
     return nodeId
 
-print("[SNOWFLAKES] Snowflake module loaded! :catblush:")
+print("[SNOWFLAKES] Snowflake module loaded!")

@@ -27,6 +27,16 @@ async def on_ready():
 	bot.change_presence(activity=discord.Game("<.help"))
 	print("Bot is READY.")
 
+
+@bot.event
+async def on_message(ctx):
+    if ctx.author.bot:
+		return False
+	else:
+		context = await bot.get_context(ctx)
+		if context.valid:
+			await bot.invoke(context)
+
 @bot.listen()
 async def on_guild_join(guild):
 	#catblonch
