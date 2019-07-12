@@ -1,7 +1,7 @@
 from discord.ext import commands
 import pymongo, discord, asyncio, re, config
 from utils import text_handler, permissions, clean
-from config import admins
+from config import admins, emojis
 from utils.timestamp import timestamp
 
 class Setup(commands.Cog):

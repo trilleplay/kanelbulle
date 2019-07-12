@@ -5,6 +5,7 @@ from utils import clean
 from utils import experiments, current_experiments, decorators, text_handler, permissions
 from datetime import datetime
 from utils.timestamp import timestamp
+from config import emojis
 
 class Moderation(commands.Cog):
 	def __init__(self, bot):
