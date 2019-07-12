@@ -34,7 +34,7 @@ class Moderation(commands.Cog):
 			await ctx.guild.leave()
 			return
 		await self.add_infraction(ctx, "kick", member, reason)
-		
+
 
 	async def self_kick(self, ctx):
 		database = self.bot.client[config.database_name]
@@ -135,7 +135,7 @@ class Moderation(commands.Cog):
 						}
 					)
 				)
-						
+
 
 	@commands.command(aliases=["check"])
 	@experiments.has_experiment(current_experiments.MODERATION)
@@ -189,6 +189,8 @@ class Moderation(commands.Cog):
 	@commands.command()
 	@decorators.is_admin()
 	async def infdrop(self, ctx):
+		timestamp_now = await timestamp()
+		await self.bot.log_channel.send(f"{timestamp_now} Admin: {str(ctx.author)}({ctx.author.id}) dropped all infractions for guild: {ctx.guild.id} {emojis['INFRACTION_DROP']}")
 		database = self.bot.client[config.database_name]
 		infractions = database["infractions"]
 		for infraction in infractions.find({"server_id": ctx.guild.id}, {"_id": 0}).limit(1):
