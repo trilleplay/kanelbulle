@@ -2,6 +2,7 @@ from discord.ext import commands
 import pymongo, discord, asyncio, re, config
 from utils import text_handler, permissions, clean
 from config import admins
+from utils.timestamp import timestamp
 
 class Setup(commands.Cog):
 	def __init__(self, bot):
