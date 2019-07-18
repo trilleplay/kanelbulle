@@ -1,11 +1,16 @@
 from discord.ext import commands
 import pymongo, discord
-from config import token, admin_actions_log, emojis
+from config import token, admin_actions_log, emojis, sentry_dsn
 import logging
+import sentry_sdk
 from utils.get_prefix import get_prefix
 from utils.timestamp import timestamp
 
 logging.basicConfig(level=logging.INFO)
+
+# track errors in sentry
+if sentry_dsn != '':
+	sentry_sdk.init(sentry_dsn)
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
