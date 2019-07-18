@@ -1,11 +1,16 @@
 from discord.ext import commands
 import pymongo, discord
-from config import token, admin_actions_log, emojis
+from config import token, admin_actions_log, emojis, sentry_dsn
 import logging
+import sentry_sdk
 from utils.get_prefix import get_prefix
 from utils.timestamp import timestamp
 
 logging.basicConfig(level=logging.INFO)
+
+# track errors in sentry
+if sentry_dsn != '':
+	sentry_sdk.init(sentry_dsn)
 
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -19,17 +24,17 @@ for cog in cogs:
 # bot.load_extension("jishaku")
 # print("Loaded cog jishaku")
 
-first_run = 0
+STARTUP_COMPLETE = False
 
 @bot.listen()
 async def on_ready():
-	global first_run
-	if first_run == 0:
-		first_run = 1
+	global STARTUP_COMPLETE
+	if not STARTUP_COMPLETE:
+		STARTUP_COMPLETE = True
 		bot.log_channel = bot.get_channel(admin_actions_log)
-	print("Bot is READY.")
-	timestamp_now = await timestamp()
-	await bot.log_channel.send(f"{timestamp_now} Bot is ready! {emojis['READY']}")
+		print("Bot is READY.")
+		timestamp_now = timestamp()
+		await bot.log_channel.send(f"{timestamp_now} Bot is ready! {emojis['READY']}")
 
 try:
 	bot.run(token)
