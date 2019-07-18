@@ -24,17 +24,17 @@ for cog in cogs:
 # bot.load_extension("jishaku")
 # print("Loaded cog jishaku")
 
-first_run = 0
+STARTUP_COMPLETE = False
 
 @bot.listen()
 async def on_ready():
-	global first_run
-	if first_run == 0:
-		first_run = 1
+	global STARTUP_COMPLETE
+	if not STARTUP_COMPLETE:
+		STARTUP_COMPLETE = True
 		bot.log_channel = bot.get_channel(admin_actions_log)
-	print("Bot is READY.")
-	timestamp_now = await timestamp()
-	await bot.log_channel.send(f"{timestamp_now} Bot is ready! {emojis['READY']}")
+		print("Bot is READY.")
+		timestamp_now = timestamp()
+		await bot.log_channel.send(f"{timestamp_now} Bot is ready! {emojis['READY']}")
 
 try:
 	bot.run(token)
