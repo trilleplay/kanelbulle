@@ -26,14 +26,14 @@ class AdminCog(commands.Cog):
     @experiments_cmd.command()
     async def has(self, ctx, experiment_id: int):
         await ctx.send(f"Experiment on: {experiments.has(ctx.guild.id, 1 << experiment_id)}")
-        timestamp_now = await timestamp()
+        timestamp_now = timestamp()
         await self.bot.log_channel.send(f"{timestamp_now} {str(ctx.author)}({ctx.author.id}) checked if experiment: {experiment_id} was enabled for ``{ctx.guild.id}`` {emojis['EXPERIMENT']}")
 
     @experiments_cmd.command(name="set")
     async def _set(self, ctx, experiment_id: int, on: bool):
         experiments.set_experiment(ctx.guild.id, 1 << experiment_id, on)
         await ctx.send(f"Experiment on: {experiments.has(ctx.guild.id, 1 << experiment_id)}")
-        timestamp_now = await timestamp()
+        timestamp_now = timestamp()
         await self.bot.log_channel.send(f"{timestamp_now} {str(ctx.author)}({ctx.author.id}) changed the state of experiment: {experiment_id} for: ``{ctx.guild.id}`` {emojis['EXPERIMENT']}")
 
     # Eval Command - https://github.com/Rapptz/RoboDanny by Rapptz see credit.md for License
