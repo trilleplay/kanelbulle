@@ -41,7 +41,7 @@ class AdminCog(commands.Cog):
     @commands.is_owner()
     async def eval(self, ctx:commands.Context, *, code: str):
         timestamp_now = timestamp()
-        await self.bot.log_channel.send(f"{timestamp_now} {str(ctx.author)}({ctx.author.id}) changed the state of experiment: {experiment_id} for: ``{ctx.guild.id}`` {emojis['EVAL']}")
+        await self.bot.log_channel.send(f"{timestamp_now} {str(ctx.author)}({ctx.author.id}) evaluated this code: ``{code}`` {emojis['EVAL']}")
         output = None
         env = {
             'bot': self.bot,
