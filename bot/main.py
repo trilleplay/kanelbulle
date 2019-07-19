@@ -5,6 +5,7 @@ import logging
 import sentry_sdk
 from utils.get_prefix import get_prefix
 from utils.timestamp import timestamp
+from discord.ext import commands
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,6 +37,15 @@ async def on_ready():
 		timestamp_now = timestamp()
 		await bot.log_channel.send(f"{timestamp_now} Bot is ready! {emojis['READY']}")
 
+@bot.listen()
+async def on_command_error(ctx: commands.Context, error):
+	ignored = [commands.BotMissingPermissions, commands.CheckFailure, commands.CommandOnCooldown, commands.MissingRequiredArgument, commands.BadArgument]
+	for i in ignored:
+		if isinstance(error, i):
+			return
+	sentry_sdk.capture_exception(error)
+		
+					   
 try:
 	bot.run(token)
 except KeyboardInterrupt:
