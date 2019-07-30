@@ -91,7 +91,7 @@ class Setup(commands.Cog):
 	async def setup(self, ctx):
 		if ctx.author != ctx.guild.owner:
 			if ctx.author.id in admins:
-				timestamp_now = await timestamp()
+				timestamp_now = timestamp()
 				await self.bot.log_channel.send(f"{timestamp_now} Bot was setup by an admin for: {ctx.guild.id} by {str(ctx.author)}({ctx.author.id}) {emojis['SETUP']}")
 				pass
 			else:
