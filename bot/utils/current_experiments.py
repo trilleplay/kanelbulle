@@ -1,2 +1,3 @@
 MODERATION = 1 << 0
 LEVELS = 1 << 1
+INVITE1 = 1 << 2
