@@ -5,6 +5,7 @@ import logging
 import sentry_sdk
 from utils.get_prefix import get_prefix
 from utils.timestamp import timestamp
+from utils.prometheus_tools import startup_prometheus, ready_events, reconnects, all_users, message_events, all_guilds
 from discord.ext import commands
 
 logging.basicConfig(level=logging.INFO)
@@ -13,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 if sentry_dsn != '':
 	sentry_sdk.init(sentry_dsn)
 
+startup_prometheus()
 bot = commands.AutoShardedBot(command_prefix=get_prefix)
 bot.client = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -28,7 +30,33 @@ for cog in cogs:
 STARTUP_COMPLETE = False
 
 @bot.listen()
+async def on_guild_join(guild):
+	all_guilds.inc()
+
+@bot.listen()
+async def on_guild_remove(guild):
+	all_guilds.dec()
+
+@bot.listen()
+async def on_member_join(member):
+	all_users.set(len(set(bot.get_all_members())))
+
+@bot.listen()
+async def on_member_remove(member):
+	all_users.set(len(set(bot.get_all_members())))
+
+@bot.listen()
+async def on_message(message):
+	message_events.inc()
+
+@bot.listen()
+async def on_reconnect():
+	reconnects.inc()
+
+@bot.listen()
 async def on_ready():
+	ready_events.inc()
+	all_users.set(len(set(bot.get_all_members())))
 	global STARTUP_COMPLETE
 	if not STARTUP_COMPLETE:
 		STARTUP_COMPLETE = True
