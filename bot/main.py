@@ -57,6 +57,7 @@ async def on_reconnect():
 async def on_ready():
 	ready_events.inc()
 	all_users.set(len(set(bot.get_all_members())))
+	all_guilds.set(len(bot.guilds))
 	global STARTUP_COMPLETE
 	if not STARTUP_COMPLETE:
 		STARTUP_COMPLETE = True
