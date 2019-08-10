@@ -8,4 +8,4 @@ message_events = Counter('message_events', 'Amount of messages sent during uptim
 reconnects = Counter('reconnects', 'Amount of reconnects the bot has done to Discords API.')
 
 def startup_prometheus():
-    start_http_server(9000)
+    start_http_server(9090)
